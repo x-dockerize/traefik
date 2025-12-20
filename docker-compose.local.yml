@@ -1,0 +1,48 @@
+services:
+  traefik:
+    image: traefik:v3.6.5
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./tls.yml:/etc/traefik/tls.yml:ro
+      - ./storage:/storage:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    command:
+      # Dashboard
+      - "--api.dashboard=true"
+
+      # Logging
+      - "--log.level=INFO"
+
+      # Providers
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.file.filename=/etc/traefik/tls.yml"
+
+      # EntryPoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # HTTP -> HTTPS Auto Forwards
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+    labels:
+      - "traefik.enable=true"
+
+      # Dashboard Router
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.tls=true"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true
