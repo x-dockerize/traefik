@@ -1,0 +1,65 @@
+services:
+  traefik:
+    image: traefik:v3.6.5
+    container_name: traefik
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./storage/acme.json:/acme.json # SSL sertifikalarının saklanacağı dosya
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Docker'ı dinlemesi için şart
+    command:
+      # Dashboard
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+
+      # Logging
+      - "--log.level=INFO"
+
+      # Providers
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false" # Her konteyneri otomatik dışarı açma
+      - "--providers.docker.network=traefik-network"
+
+      # EntryPoints
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      # HTTP -> HTTPS Otomatik Yönlendirme
+      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+
+      # Bu ayar, X-Forwarded-For başlığının silinmesini engeller.
+      # Cloudflare ve Docker NAT arkasında olduğun için bu şart.
+      - "--entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
+      - "--entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
+
+      # Let's Encrypt Ayarları (Mail adresini güncelle!)
+      - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.myresolver.acme.email=${LE_EMAIL:-admin@example.com}"
+      - "--certificatesresolvers.myresolver.acme.storage=/acme.json"
+    labels:
+      - "traefik.enable=true"
+
+      # Traefik Dashboard Router
+      - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)" # Traefik panosuna erişim için host adı
+      - "traefik.http.routers.traefik.entrypoints=websecure"
+      - "traefik.http.routers.traefik.tls.certresolver=myresolver"
+      - "traefik.http.routers.traefik.service=api@internal"
+
+      # Dashboard Security
+      - "traefik.http.routers.traefik.middlewares=traefik-allowlist"
+
+      # IP Allowlist
+      - "traefik.http.middlewares.traefik-allowlist.ipallowlist.sourcerange=${TRAEFIK_DASHBOARD_ALLOWLIST}"
+      - "traefik.http.middlewares.traefik-allowlist.ipallowlist.ipstrategy.depth=1"
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - traefik-network
+
+networks:
+  traefik-network:
+    external: true
