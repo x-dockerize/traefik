@@ -8,6 +8,7 @@ services:
     volumes:
       - ./storage/acme.json:/acme.json # SSL sertifikalarının saklanacağı dosya
       - /etc/localtime:/etc/localtime:ro
+      - /var/log/traefik:/var/log/traefik
       - /var/run/docker.sock:/var/run/docker.sock:ro # Docker'ı dinlemesi için şart
     command:
       # Dashboard
@@ -16,6 +17,11 @@ services:
 
       # Logging
       - "--log.level=INFO"
+
+      # Access Log
+      - "--accesslog=true"
+      - "--accesslog.format=json"
+      - "--accesslog.filepath=/var/log/traefik/access.log"
 
       # Providers
       - "--providers.docker=true"
@@ -59,6 +65,39 @@ services:
       - "443:443"
     networks:
       - traefik-network
+
+  crowdsec:
+    image: crowdsecurity/crowdsec:latest
+    container_name: crowdsec
+    restart: unless-stopped
+    environment:
+      COLLECTIONS: "crowdsecurity/http-cve crowdsecurity/nginx crowdsecurity/traefik"
+      GID: "1000"
+    volumes:
+      - crowdsec-data:/var/lib/crowdsec/data
+      - crowdsec-config:/etc/crowdsec
+      - ./crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ./crowdsec/scenarios:/etc/crowdsec/scenarios
+      - /var/log/traefik:/var/log/traefik:ro
+    networks:
+      - traefik-network
+
+  crowdsec-bouncer:
+    image: fbonalair/traefik-crowdsec-bouncer:latest
+    container_name: crowdsec-bouncer
+    restart: unless-stopped
+    environment:
+      CROWDSEC_BOUNCER_API_KEY: qCyfexcle1nXU5JQpG2lYLN8VAMYB2nF3SgrdG3WGmM
+      CROWDSEC_AGENT_HOST: crowdsec
+      CROWDSEC_AGENT_PORT: 8080
+    networks:
+      - traefik-network
+
+volumes:
+  crowdsec-data:
+    driver: local
+  crowdsec-config:
+    driver: local
 
 networks:
   traefik-network:

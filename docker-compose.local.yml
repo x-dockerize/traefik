@@ -29,6 +29,10 @@ services:
       # HTTP -> HTTPS Auto Forwards
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+
+      # Forwarded Headers Settings (Only Localhost for Development)
+      - "--entryPoints.web.forwardedHeaders.insecure=true"
+      - "--entryPoints.websecure.forwardedHeaders.insecure=true"
     labels:
       - "traefik.enable=true"
 
