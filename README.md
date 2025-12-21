@@ -105,8 +105,8 @@ cp docker-compose.production.yml docker-compose.yml
 Production ortamında SSL sertifikalarının saklanacağı dosya oluşturun ve izinlerini ayarlayın:
 
 ```bash
-touch .docker/treafik/acme.json
-chmod 600 .docker/treafik/acme.json
+touch .docker/traefik/acme.json
+chmod 600 .docker/traefik/acme.json
 ```
 
 ### 4. Traefik Konteynerini Başlatın:
@@ -115,14 +115,14 @@ chmod 600 .docker/treafik/acme.json
 docker compose up -d
 ```
 
-> Not: Production ortamında SSL sertifikaları `.docker/treafik/acme.json` dosyasında saklanacaktır.
+> Not: Production ortamında SSL sertifikaları `.docker/traefik/acme.json` dosyasında saklanacaktır.
 
 ## Notlar
 
 * `tls.yml` dosyası ile default ve özel domain sertifikalarını yapılandırabilirsiniz.
 * Local ortamda self-signed sertifika oluşturmak şart değildir, sadece gerekli durumlarda yapılmalıdır.
 * **Güvenlik**: Production ortamında Traefik Dashboard'u ipallowlist ile korunmaktadır. Kendi IP adresinizi .env dosyasına eklemeyi unutmayın.
-* **Kalıcılık**: .docker/treafik/ dizini altındaki acme.json ve sertifikalar .gitignore ile korunmaktadır ancak bu dosyaların yedeğini almanız SSL limitlerine takılmamanız için önerilir.
+* **Kalıcılık**: .docker/traefik/ dizini altındaki acme.json ve sertifikalar .gitignore ile korunmaktadır ancak bu dosyaların yedeğini almanız SSL limitlerine takılmamanız için önerilir.
 * **Otomatik Yönlendirme**: Bu yapılandırma tüm HTTP isteklerini otomatik olarak HTTPS'e yönlendirir.
 
 ## Kaynaklar
