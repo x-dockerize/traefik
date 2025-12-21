@@ -87,7 +87,7 @@ services:
     networks:
       - traefik-network
 
-  crowdsec-bouncer:
+  crowdsec-traefik-bouncer:
     image: fbonalair/traefik-crowdsec-bouncer:latest
     container_name: crowdsec-traefik-bouncer
     restart: unless-stopped
