@@ -117,11 +117,26 @@ docker compose up -d
 
 > Not: Production ortamında SSL sertifikaları `.docker/traefik/acme.json` dosyasında saklanacaktır.
 
+### 5. CrowdSec Kurulumu
+
+CrowdSec Traefik Bouncer'ı ekleyin ve API anahtarını alın:
+
+```bash
+docker exec crowdsec cscli bouncers add traefik-bouncer
+```
+
+Daha sonra `.env` dosyasına `CROWDSEC_API_KEY` değerini ekleyin ve crowdsec-traefik-bouncer konteynerini yeniden başlatın:
+
+```bash
+docker compose restart crowdsec-traefik-bouncer
+```
+
 ## Notlar
 
 * `tls.yml` dosyası ile default ve özel domain sertifikalarını yapılandırabilirsiniz.
 * Local ortamda self-signed sertifika oluşturmak şart değildir, sadece gerekli durumlarda yapılmalıdır.
 * **Güvenlik**: Production ortamında Traefik Dashboard'u ipallowlist ile korunmaktadır. Kendi IP adresinizi .env dosyasına eklemeyi unutmayın.
+* **Otomasyon**: CrowdSec ile kötü niyetli IP’ler otomatik tespit edilir ve Traefik üzerinden engellenir.
 * **Kalıcılık**: .docker/traefik/ dizini altındaki acme.json ve sertifikalar .gitignore ile korunmaktadır ancak bu dosyaların yedeğini almanız SSL limitlerine takılmamanız için önerilir.
 * **Otomatik Yönlendirme**: Bu yapılandırma tüm HTTP isteklerini otomatik olarak HTTPS'e yönlendirir.
 
