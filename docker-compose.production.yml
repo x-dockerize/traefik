@@ -78,10 +78,12 @@ services:
     environment:
       COLLECTIONS: "crowdsecurity/http-cve crowdsecurity/nginx crowdsecurity/traefik"
       GID: "1000"
+      WHITELISTED_IPS: "${CROWDSEC_WHITELISTED_IPS}"
     volumes:
       - crowdsec-data:/var/lib/crowdsec/data
       - crowdsec-config:/etc/crowdsec
       - ./.docker/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
+      - ./.docker/crowdsec/whitelist.yaml:/etc/crowdsec/parsers/s02-enrich/my-whitelist.yaml:ro
       - /var/log/traefik:/var/log/traefik:ro
     networks:
       - traefik-network
