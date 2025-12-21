@@ -1,0 +1,16 @@
+# -------------------
+# Traefik access log
+# -------------------
+filenames:
+  - /var/log/traefik/access.log
+labels:
+  type: traefik
+
+---
+# -------------------
+# Nginx access/error
+# -------------------
+#filenames:
+#  - /var/log/nginx/*.log
+#labels:
+#  type: nginx

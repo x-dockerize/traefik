@@ -1,0 +1,11 @@
+type: leaky
+name: custom/api-404-scan
+description: "API üzerinde çoklu 404 üreten IP'leri banla"
+filter: |
+  evt.Meta.log_type == 'traefik' &&
+  evt.Parsed.status == '404'
+leakspeed: 10s
+capacity: 5
+blackhole: 5m
+labels:
+  remediation: true

@@ -34,11 +34,12 @@ services:
       # HTTP -> HTTPS Otomatik Yönlendirme
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-
-      # Bu ayar, X-Forwarded-For başlığının silinmesini engeller.
-      # Cloudflare ve Docker NAT arkasında olduğun için bu şart.
+      # Bu ayar, X-Forwarded-For başlığının silinmesini engeller. Cloudflare ve Docker NAT arkasında olduğun için bu şart.
       - "--entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
       - "--entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
+      # Global CrowdSec Middleware
+      - "--entrypoints.web.http.middlewares=crowdsec@docker"
+      - "--entrypoints.websecure.http.middlewares=crowdsec@docker"
 
       # Let's Encrypt Ayarları (Mail adresini güncelle!)
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
@@ -60,6 +61,10 @@ services:
       # IP Allowlist
       - "traefik.http.middlewares.traefik-allowlist.ipallowlist.sourcerange=${TRAEFIK_DASHBOARD_ALLOWLIST}"
       - "traefik.http.middlewares.traefik-allowlist.ipallowlist.ipstrategy.depth=1"
+
+      # CrowdSec Forward Auth Middleware
+      - "traefik.http.middlewares.crowdsec.forwardauth.address=http://crowdsec-bouncer:8080/api/v1/forwardAuth"
+      - "traefik.http.middlewares.crowdsec.forwardauth.trustForwardHeader=true"
     ports:
       - "80:80"
       - "443:443"
@@ -87,9 +92,10 @@ services:
     container_name: crowdsec-bouncer
     restart: unless-stopped
     environment:
-      CROWDSEC_BOUNCER_API_KEY: qCyfexcle1nXU5JQpG2lYLN8VAMYB2nF3SgrdG3WGmM
+      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_BOUNCER_API_KEY}
       CROWDSEC_AGENT_HOST: crowdsec
       CROWDSEC_AGENT_PORT: 8080
+      TRUSTED_PROXIES: ${TRUSTED_IPS}
     networks:
       - traefik-network
 
