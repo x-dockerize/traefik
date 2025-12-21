@@ -6,8 +6,8 @@ services:
     security_opt:
       - no-new-privileges:true
     volumes:
-      - ./tls.yml:/etc/traefik/tls.yml:ro
-      - ./storage:/storage:ro
+      - ./.docker/traefik/tls.yml:/etc/traefik/tls.yml:ro
+      - ./.docker/traefik/certs:/etc/traefik/certs:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     command:

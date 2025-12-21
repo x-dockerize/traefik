@@ -6,7 +6,7 @@ services:
     security_opt:
       - no-new-privileges:true
     volumes:
-      - ./storage/acme.json:/acme.json # SSL sertifikalarının saklanacağı dosya
+      - ./.docker/traefik/acme.json:/acme.json # SSL sertifikalarının saklanacağı dosya
       - /etc/localtime:/etc/localtime:ro
       - /var/log/traefik:/var/log/traefik
       - /var/run/docker.sock:/var/run/docker.sock:ro # Docker'ı dinlemesi için şart

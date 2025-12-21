@@ -58,10 +58,10 @@ cp tls.yml.example tls.yml
 
 ### 4. Opsiyonel Olarak Self-Signed Sertifika Oluşturabilirsiniz:
 
-Sertifika ve key dosyalarını storage/certs/mydomain.com dizinine koyun
+Sertifika ve key dosyalarını .docker/traefik/certs/mydomain.com dizinine koyun
 
 ```bash
-mkdir -p storage/certs/mydomain.com
+mkdir -p .docker/traefik/certs/mydomain.com
 ```
 
 Self-signed sertifika oluşturmak için mkcert aracını kullanabilirsiniz. Bakınız: [mkcert GitHub Sayfası](https://github.com/FiloSottile/mkcert)
@@ -72,9 +72,9 @@ mkcert -install
 
 Self-signed sertifika oluşturma komutu:
 ```bash
-mkcert -key-file storage/certs/mydomain.com/local.mydomain.com.key \
-       -cert-file storage/certs/mydomain.com/local.mydomain.com.crt \
-       mydomain.com "*.mydomain.com"
+mkcert -key-file .docker/traefik/certs/mydomain.com/local.mydomain.com.key \
+       -cert-file .docker/traefik/certs/mydomain.com/local.mydomain.com.crt \
+       local.mydomain.com "*.local.mydomain.com"
 ```
 
 `tls.yml` dosyasını düzenleyerek self-signed sertifikaları ekleyebilirsiniz.
@@ -105,8 +105,8 @@ cp docker-compose.production.yml docker-compose.yml
 Production ortamında SSL sertifikalarının saklanacağı dosya oluşturun ve izinlerini ayarlayın:
 
 ```bash
-touch storage/acme.json
-chmod 600 storage/acme.json
+touch .docker/treafik/acme.json
+chmod 600 .docker/treafik/acme.json
 ```
 
 ### 4. Traefik Konteynerini Başlatın:
@@ -115,15 +115,14 @@ chmod 600 storage/acme.json
 docker compose up -d
 ```
 
-> Not: Production ortamında SSL sertifikaları `storage/acme.json` dosyasında saklanacaktır.
+> Not: Production ortamında SSL sertifikaları `.docker/treafik/acme.json` dosyasında saklanacaktır.
 
 ## Notlar
 
 * `tls.yml` dosyası ile default ve özel domain sertifikalarını yapılandırabilirsiniz.
 * Local ortamda self-signed sertifika oluşturmak şart değildir, sadece gerekli durumlarda yapılmalıdır.
-* `.gitignore` ile `.env`, `tls.yml`, ve proje özel dosyalar versiyon kontrolüne dahil edilmez.
 * **Güvenlik**: Production ortamında Traefik Dashboard'u ipallowlist ile korunmaktadır. Kendi IP adresinizi .env dosyasına eklemeyi unutmayın.
-* **Kalıcılık**: storage/ dizini altındaki acme.json ve sertifikalar .gitignore ile korunmaktadır ancak bu dosyaların yedeğini almanız SSL limitlerine takılmamanız için önerilir.
+* **Kalıcılık**: .docker/treafik/ dizini altındaki acme.json ve sertifikalar .gitignore ile korunmaktadır ancak bu dosyaların yedeğini almanız SSL limitlerine takılmamanız için önerilir.
 * **Otomatik Yönlendirme**: Bu yapılandırma tüm HTTP isteklerini otomatik olarak HTTPS'e yönlendirir.
 
 ## Kaynaklar
