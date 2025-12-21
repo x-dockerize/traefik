@@ -128,7 +128,7 @@ docker exec crowdsec cscli bouncers add traefik-bouncer
 Daha sonra `.env` dosyasına `CROWDSEC_API_KEY` değerini ekleyin ve crowdsec-traefik-bouncer konteynerini yeniden başlatın:
 
 ```bash
-docker compose restart crowdsec-traefik-bouncer
+docker compose restart traefik
 ```
 
 ## Notlar

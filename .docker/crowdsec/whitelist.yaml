@@ -1,6 +1,0 @@
-name: my/custom-whitelist
-description: "IP ve CIDR destekli liste"
-whitelist:
-  reason: "Güvenli IP ve Ağlar"
-  expression:
-    - "IsIPInSubnets(evt.Meta.source_ip, '${WHITELISTED_IPS}')"
