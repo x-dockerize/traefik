@@ -94,12 +94,14 @@ services:
     image: fbonalair/traefik-crowdsec-bouncer:latest
     container_name: crowdsec-traefik-bouncer
     environment:
-      GIN_MODE: "release"
-      FAIL_OPEN: "true"
       CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_TRAEFIK_BOUNCER_API_KEY}
       CROWDSEC_AGENT_HOST: crowdsec:8080
       PORT: 8080
+      GIN_MODE: "release"
+      FAIL_OPEN: "true"
       TRUSTED_PROXIES: "172.16.0.0/12,10.0.0.0/8,192.168.0.0/16,${TRUSTED_IPS}"
+      CACHE_SIZE: ${CROWDSEC_TRAEFIK_CACHE_SIZE}
+      CACHE_TTL: ${CROWDSEC_TRAEFIK_CACHE_TTL}
     networks:
       - traefik-network
     restart: unless-stopped
