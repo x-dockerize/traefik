@@ -85,7 +85,7 @@ services:
     networks:
       - traefik-network
     healthcheck:
-      test: ["CMD", "cscli", "lapi", "status"]
+      test: [ "CMD", "cscli", "lapi", "status" ]
       interval: 10s
       timeout: 60s
       retries: 5
