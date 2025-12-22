@@ -78,7 +78,7 @@ services:
     environment:
       COLLECTIONS: "crowdsecurity/http-cve crowdsecurity/nginx crowdsecurity/traefik"
       GID: "1000"
-      DISABLE_HUB_UPGRADE: ${CROWDSEC_DISABLE_HUB_UPGRADE}
+      DISABLE_HUB_UPGRADE: ${CROWDSEC_HUB_UPGRADE}
     volumes:
       - crowdsec-data:/var/lib/crowdsec/data
       - crowdsec-config:/etc/crowdsec
