@@ -37,7 +37,7 @@ services:
       - "--entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
       - "--entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
 
-      # Let's Encrypt Ayarları (Mail adresini güncelle!)
+      # Let's Encrypt Ayarları
       - "--certificatesresolvers.myresolver.acme.httpchallenge=true"
       - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
       - "--certificatesresolvers.myresolver.acme.email=${LE_EMAIL:-admin@example.com}"
@@ -50,15 +50,13 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=myresolver"
       - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.traefik.middlewares=internal@docker"
 
-      # Dashboard Security
-      - "traefik.http.routers.traefik.middlewares=traefik-allowlist"
+      # 1️⃣ IP Allowlist
+      - "traefik.http.middlewares.internal.ipallowlist.sourcerange=${INTERNAL_IP_ALLOWLIST}"
+      - "traefik.http.middlewares.internal.ipallowlist.ipstrategy.depth=1"
 
-      # IP Allowlist
-      - "traefik.http.middlewares.traefik-allowlist.ipallowlist.sourcerange=${DASHBOARD_ALLOWLIST}"
-      - "traefik.http.middlewares.traefik-allowlist.ipallowlist.ipstrategy.depth=1"
-
-      # CrowdSec Forward Auth Middleware
+      # 2️⃣ CrowdSec ForwardAuth
       - "traefik.http.middlewares.crowdsec.forwardauth.address=http://crowdsec-traefik-bouncer:8080/api/v1/forwardAuth"
       - "traefik.http.middlewares.crowdsec.forwardauth.trustForwardHeader=true"
       - "traefik.http.middlewares.crowdsec.forwardauth.authResponseHeaders=X-Crowdsec-Reason"
@@ -142,19 +140,13 @@ services:
     labels:
       - "traefik.enable=true"
 
-      # Router
+      # Routers
       - "traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_DASHBOARD_HOST:-crowdsec.localhost}`)"
       - "traefik.http.routers.crowdsec-manager.entrypoints=websecure"
       - "traefik.http.routers.crowdsec-manager.tls.certresolver=myresolver"
+      - "traefik.http.routers.crowdsec-manager.middlewares=internal@docker" # Security Middleware
 
-      # Dashboard Security
-      - "traefik.http.routers.crowdsec-manager.middlewares=traefik-allowlist"
-
-      # IP Allowlist
-      - "traefik.http.middlewares.crowdsec-manager-allowlist.ipallowlist.sourcerange=${DASHBOARD_ALLOWLIST}"
-      - "traefik.http.middlewares.crowdsec-manager-allowlist.ipallowlist.ipstrategy.depth=1"
-
-      # Service
+      # Services
       - "traefik.http.services.crowdsec-manager.loadbalancer.server.port=8080"
     networks:
       - traefik-network

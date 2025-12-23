@@ -193,6 +193,18 @@ CrowdSec Console, CrowdSec’in merkezi yönetim ve izleme panelidir. Kısaca: b
 
 ## Notlar
 
+Hazır olarak iki adet middleware yapılandırması bulunmaktadır:
+
+CrowdSec Koruması için:
+```yaml
+- "traefik.http.routers.%router%.middlewares=crowdsec@docker"
+```
+
+Grafana, Prometheus vb. servislere iç ağ erişimi sağlamak için:
+```yaml
+- "traefik.http.routers.%router%.middlewares=internal@docker"
+```
+
 * `tls.yml` dosyası ile default ve özel domain sertifikalarını yapılandırabilirsiniz.
 * Local ortamda self-signed sertifika oluşturmak şart değildir, sadece gerekli durumlarda yapılmalıdır.
 * **Güvenlik**: Production ortamında Traefik Dashboard'u ipallowlist ile korunmaktadır. Kendi IP adresinizi .env dosyasına eklemeyi unutmayın.
