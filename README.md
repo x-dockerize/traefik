@@ -105,8 +105,13 @@ cp docker-compose.production.yml docker-compose.yml
 Production ortamında SSL sertifikalarının saklanacağı dosya oluşturun ve izinlerini ayarlayın:
 
 ```bash
-touch .docker/traefik/acme.json
-chmod 600 .docker/traefik/acme.json
+# Http Challenge için
+touch .docker/traefik/le-http-acme.json
+chmod 600 .docker/traefik/le-http-acme.json
+
+# Cloudflare DNS Challenge için (Eğer kullanıyorsanız)
+touch .docker/traefik/le-cloudflare-acme.json
+chmod 600 .docker/traefik/le-cloudflare-acme.json
 ```
 
 ### 4. Traefik Konteynerini Başlatın:
@@ -114,8 +119,6 @@ chmod 600 .docker/traefik/acme.json
 ```bash
 docker compose up -d
 ```
-
-> Not: Production ortamında SSL sertifikaları `.docker/traefik/acme.json` dosyasında saklanacaktır.
 
 ### 5. CrowdSec Kurulumu
 

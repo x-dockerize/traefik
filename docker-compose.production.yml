@@ -7,7 +7,8 @@ services:
     security_opt:
       - no-new-privileges:true
     volumes:
-      - ./.docker/traefik/acme.json:/acme.json # SSL sertifikalarının saklanacağı dosya
+      - ./.docker/traefik/certs/le-http-acme.json:/le-http-acme.json # SSL sertifikalarının saklanacağı dosya
+      - ./.docker/traefik/certs/le-cloudflare-acme.json:/le-cloudflare-acme.json # SSL sertifikalarının saklanacağı dosya
       - /etc/localtime:/etc/localtime:ro
       - /var/log/traefik:/var/log/traefik
       - /var/run/docker.sock:/var/run/docker.sock:ro # Docker'ı dinlemesi için şart
@@ -40,21 +41,20 @@ services:
       - "--entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
 
       ####################################################################################################
-      # Certificate Resolver (Let's Encrypt ACME with Cloudflare DNS Challenge)
-      - "--certificatesresolvers.myresolver.acme.email=${LE_EMAIL:-admin@example.com}"
-      - "--certificatesresolvers.myresolver.acme.storage=/acme.json"
-      ####################################################################################################
-      # Staging Let's Encrypt (Only Test) Sunucusu
-      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      ####################################################################################################
       # HTTP Challenge (Alternative)
-      #- "--certificatesresolvers.myresolver.acme.httpchallenge=true"
-      #- "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.le-http.acme.email=${LE_EMAIL:-admin@example.com}"
+      - "--certificatesresolvers.le-http.acme.storage=/le-http-acme.json"
+      - "--certificatesresolvers.le-http.acme.httpchallenge=true"
+      - "--certificatesresolvers.le-http.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # Staging Let's Encrypt (Only Test) Server
       ####################################################################################################
       # DNS Challenge (Cloudflare)
-      - "--certificatesresolvers.myresolver.acme.dnschallenge=true"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0"
+      - "--certificatesresolvers.le-cloudflare.acme.email=${LE_EMAIL:-admin@example.com}"
+      - "--certificatesresolvers.le-cloudflare.acme.storage=/le-cloudflare-acme.json"
+      - "--certificatesresolvers.le-cloudflare.acme.dnschallenge=true"
+      - "--certificatesresolvers.le-cloudflare.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.le-cloudflare.acme.dnschallenge.delaybeforecheck=0"
+      #- "--certificatesresolvers.le-cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # Staging Let's Encrypt (Only Test) Server
       ####################################################################################################
     labels:
       - "traefik.enable=true"
@@ -66,7 +66,7 @@ services:
       # Traefik Dashboard Router
       - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)"
       - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=myresolver"
+      - "traefik.http.routers.traefik.tls.certresolver=le-http"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.middlewares=internal@docker"
 
@@ -161,7 +161,8 @@ services:
       # Routers
       - "traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_DASHBOARD_HOST:-crowdsec.localhost}`)"
       - "traefik.http.routers.crowdsec-manager.entrypoints=websecure"
-      - "traefik.http.routers.crowdsec-manager.tls.certresolver=myresolver"
+      - "traefik.http.routers.crowdsec-manager.tls.certresolver=le-http"
+      - "traefik.http.routers.crowdsec-manager.service=crowdsec-manager"
       - "traefik.http.routers.crowdsec-manager.middlewares=internal@docker" # Security Middleware
 
       # Services
