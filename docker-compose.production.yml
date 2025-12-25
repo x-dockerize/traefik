@@ -46,7 +46,7 @@ services:
       - "--certificatesresolvers.le-http.acme.storage=/le-http-acme.json"
       - "--certificatesresolvers.le-http.acme.httpchallenge=true"
       - "--certificatesresolvers.le-http.acme.httpchallenge.entrypoint=web"
-      - "--certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # Staging Let's Encrypt (Only Test) Server
+      #- "--certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # Staging Let's Encrypt (Only Test) Server
       ####################################################################################################
       # DNS Challenge (Cloudflare)
       - "--certificatesresolvers.le-cloudflare.acme.email=${LE_EMAIL:-admin@example.com}"
@@ -68,7 +68,7 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.tls.certresolver=le-http"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.middlewares=internal@docker"
+      - "traefik.http.routers.traefik.middlewares=internal@docker" # Security Middleware
 
       # 1️⃣ IP Allowlist
       - "traefik.http.middlewares.internal.ipallowlist.sourcerange=${INTERNAL_IP_ALLOWLIST}"
