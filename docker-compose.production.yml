@@ -132,11 +132,11 @@ services:
     environment:
       - CROWDSEC_LAPI_URL=${CROWDSEC_LAPI_URL}
       - CROWDSEC_LAPI_KEY=${CROWDSEC_CLOUDFLARE_BOUNCER_API_KEY}
-      - CROWDSEC_UPDATE_FREQUENCY=10s
+      - CROWDSEC_UPDATE_FREQUENCY=3m
       - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
       - CLOUDFLARE_TOKEN=${CLOUDFLARE_TOKEN}
       - CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
-      - CLOUDFLARE_UPDATE_FREQUENCY=30s
+      - CLOUDFLARE_UPDATE_FREQUENCY=5m
     volumes:
       - .docker/crowdsec/bouncers/cloudflare-bouncer.yaml:/etc/crowdsec/bouncers/crowdsec-cloudflare-bouncer.yaml:ro
     networks:
