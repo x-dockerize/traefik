@@ -28,7 +28,7 @@ services:
 
       # Ping
       - "--ping=true"
-      - "--ping.entrypoint=web"
+      - "--ping.entrypoint=ping"
 
       # Providers
       - "--providers.docker=true"
@@ -36,6 +36,7 @@ services:
       - "--providers.docker.network=traefik-network"
 
       # EntryPoints
+      - "--entrypoints.ping.address=:8082"
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       ## HTTP -> HTTPS Automatic Redirection
@@ -89,7 +90,7 @@ services:
     networks:
       - traefik-network
     healthcheck:
-      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
+      test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8082/ping" ]
       interval: 10s
       timeout: 3s
       retries: 5
