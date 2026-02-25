@@ -138,7 +138,7 @@ services:
       - traefik-network
 
   crowdsec-manager:
-    image: hhftechnology/crowdsec-manager:latest
+    image: hhftechnology/crowdsec-manager:${CROWDSEC_MANAGER_VERSION:?required}
     container_name: crowdsec-manager
     restart: unless-stopped
     environment:
