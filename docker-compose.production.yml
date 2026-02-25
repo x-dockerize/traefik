@@ -117,6 +117,7 @@ services:
       interval: 10s
       timeout: 10s
       retries: 5
+      start_period: 30s
 
   crowdsec-traefik-bouncer:
     image: fbonalair/traefik-crowdsec-bouncer:${CROWDSEC_BOUNCER_VERSION:?required}
@@ -130,7 +131,7 @@ services:
       CROWDSEC_AGENT_HOST: crowdsec:8080
       PORT: 8080
       GIN_MODE: release
-      FAIL_OPEN: ${CROWDSEC_FAIL_OPEN:-true}
+      FAIL_OPEN: ${CROWDSEC_FAIL_OPEN:-false}
       TRUSTED_PROXIES: 172.16.0.0/12,10.0.0.0/8,192.168.0.0/16,${TRUSTED_IPS}
       CACHE_SIZE: ${CROWDSEC_TRAEFIK_CACHE_SIZE}
       CACHE_TTL: ${CROWDSEC_TRAEFIK_CACHE_TTL}
@@ -147,6 +148,9 @@ services:
     image: hhftechnology/crowdsec-manager:${CROWDSEC_MANAGER_VERSION:?required}
     container_name: crowdsec-manager
     restart: unless-stopped
+    depends_on:
+      crowdsec:
+        condition: service_healthy
     environment:
       CROWDSEC_LAPI_URL: http://crowdsec:8080
       CROWDSEC_LAPI_KEY: ${CROWDSEC_MANAGER_API_KEY}
