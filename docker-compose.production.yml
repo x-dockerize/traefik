@@ -159,6 +159,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
       - traefik-network
+    healthcheck:
+      test: [ "CMD-SHELL", "nc -z 127.0.0.1 8080 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
     labels:
       - traefik.enable=true
 
