@@ -82,7 +82,7 @@ services:
       - traefik.http.routers.traefik.middlewares=internal@docker # Security Middleware
 
       # 1️⃣ IP Allowlist
-      - traefik.http.middlewares.internal.ipallowlist.sourcerange=${INTERNAL_IP_ALLOWLIST}
+      - traefik.http.middlewares.internal.ipallowlist.sourcerange=${INTERNAL_IP_ALLOWLIST:?required}
       - traefik.http.middlewares.internal.ipallowlist.ipstrategy.depth=1
 
       # 2️⃣ CrowdSec ForwardAuth
