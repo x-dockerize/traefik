@@ -126,7 +126,7 @@ services:
       crowdsec:
         condition: service_healthy
     environment:
-      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_TRAEFIK_BOUNCER_API_KEY}
+      CROWDSEC_BOUNCER_API_KEY: ${CROWDSEC_TRAEFIK_BOUNCER_API_KEY:?required}
       CROWDSEC_AGENT_HOST: crowdsec:8080
       PORT: 8080
       GIN_MODE: "release"
