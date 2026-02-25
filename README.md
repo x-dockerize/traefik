@@ -170,25 +170,7 @@ Daha sonra `.env` dosyasına `CROWDSEC_TRAEFIK_BOUNCER_API_KEY` değerini ekleyi
 docker compose up -d crowdsec-traefik-bouncer
 ```
 
-#### 5.3 Cloudflare Bouncer İçin API Anahtarı Oluşturma (Opsiyonel)
-
-CrowdSec Cloudflare Bouncer'ı için aşağıdaki komutla API anahtarını alın:
-
-```bash
-docker exec crowdsec cscli bouncers add cloudflare-bouncer
-```
-
-Daha sonra `.env` dosyasına `CROWDSEC_CLOUDFLARE_BOUNCER_API_KEY` değerini ekleyin.
-
-Bu aşamada [bu bağlantıdaki](https://hub.docker.com/r/crowdsecurity/cloudflare-bouncer) adımları takip ederek `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_TOKEN`, `CLOUDFLARE_ZONE_ID` değerlerini oluşturun.
-
-Cloudflare entegrasyonun tamamladıktan sonra crowdsec-cloudflare-bouncer konteynerini yeniden başlatın:
-
-```bash
-docker compose up -d crowdsec-traefik-bouncer
-```
-
-#### 5.4 CrowdSec Console ile Entegrasyon (Opsiyonel)
+#### 5.3 CrowdSec Console ile Entegrasyon (Opsiyonel)
 
 CrowdSec Console, CrowdSec’in merkezi yönetim ve izleme panelidir. Kısaca: birden fazla sunucu ve CrowdSec kurulumunu tek bir yerden görmeni, yönetmeni ve analiz etmeni sağlar. 
 
