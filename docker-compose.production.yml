@@ -71,8 +71,8 @@ services:
       - traefik.enable=true
 
       # TLS Domains for Wildcard Certificates
-      - traefik.http.routers.traefik.tls.domains[0].main=${INTERNAL_SERVICE_DOMAIN}
-      - traefik.http.routers.traefik.tls.domains[0].sans=*.${INTERNAL_SERVICE_DOMAIN}
+      - traefik.http.routers.traefik.tls.domains[0].main=${INTERNAL_SERVICE_DOMAIN:?required}
+      - traefik.http.routers.traefik.tls.domains[0].sans=*.${INTERNAL_SERVICE_DOMAIN:?required}
 
       # Traefik Dashboard Router
       - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)
