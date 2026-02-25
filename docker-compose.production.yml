@@ -115,7 +115,7 @@ services:
     healthcheck:
       test: [ "CMD", "cscli", "lapi", "status" ]
       interval: 10s
-      timeout: 60s
+      timeout: 10s
       retries: 5
 
   crowdsec-traefik-bouncer:
