@@ -126,26 +126,6 @@ services:
       crowdsec:
         condition: service_healthy
 
-  crowdsec-cloudflare-bouncer:
-    image: crowdsecurity/cloudflare-bouncer:latest
-    container_name: crowdsec-cloudflare-bouncer
-    environment:
-      - CROWDSEC_LAPI_URL=${CROWDSEC_LAPI_URL}
-      - CROWDSEC_LAPI_KEY=${CROWDSEC_CLOUDFLARE_BOUNCER_API_KEY}
-      - CROWDSEC_UPDATE_FREQUENCY=360m
-      - CLOUDFLARE_ACCOUNT_ID=${CLOUDFLARE_ACCOUNT_ID}
-      - CLOUDFLARE_TOKEN=${CLOUDFLARE_TOKEN}
-      - CLOUDFLARE_ZONE_ID=${CLOUDFLARE_ZONE_ID}
-      - CLOUDFLARE_UPDATE_FREQUENCY=5m
-    volumes:
-      - .docker/crowdsec/bouncers/cloudflare-bouncer.yaml:/etc/crowdsec/bouncers/crowdsec-cloudflare-bouncer.yaml:ro
-    networks:
-      - traefik-network
-    restart: unless-stopped
-    depends_on:
-      crowdsec:
-        condition: service_healthy
-
   crowdsec-manager:
     image: hhftechnology/crowdsec-manager:latest
     container_name: crowdsec-manager
