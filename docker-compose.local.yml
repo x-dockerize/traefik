@@ -2,13 +2,7 @@ services:
   traefik:
     image: traefik:v3.6.5
     container_name: traefik
-    security_opt:
-      - no-new-privileges:true
-    volumes:
-      - ./.docker/traefik/tls.yml:/etc/traefik/tls.yml:ro
-      - ./.docker/traefik/certs:/etc/traefik/certs:ro
-      - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
     command:
       # Dashboard
       - "--api.dashboard=true"
@@ -32,6 +26,16 @@ services:
       # Forwarded Headers Settings (Only Localhost for Development)
       - "--entryPoints.web.forwardedHeaders.insecure=true"
       - "--entryPoints.websecure.forwardedHeaders.insecure=true"
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./.docker/traefik/tls.yml:/etc/traefik/tls.yml:ro
+      - ./.docker/traefik/certs:/etc/traefik/certs:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - traefik-network
     labels:
       - "traefik.enable=true"
 
@@ -40,12 +44,9 @@ services:
       - "traefik.http.routers.traefik.entrypoints=websecure"
       - "traefik.http.routers.traefik.service=api@internal"
       - "traefik.http.routers.traefik.tls=true"
-    ports:
-      - "80:80"
-      - "443:443"
-    networks:
-      - traefik-network
-    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+
 
 networks:
   traefik-network:
