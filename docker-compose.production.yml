@@ -89,7 +89,7 @@ services:
     networks:
       - traefik-network
     healthcheck:
-      test: [ "CMD", "wget", "--spider", "-q", "http://localhost/ping" ]
+      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
       interval: 10s
       timeout: 3s
       retries: 5
