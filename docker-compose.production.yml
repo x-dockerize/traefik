@@ -97,7 +97,7 @@ services:
       start_period: 10s
 
   crowdsec:
-    image: crowdsecurity/crowdsec:v1.7.6
+    image: crowdsecurity/crowdsec:${CROWDSEC_VERSION:?required}
     container_name: crowdsec
     restart: unless-stopped
     environment:
@@ -119,7 +119,7 @@ services:
       retries: 5
 
   crowdsec-traefik-bouncer:
-    image: fbonalair/traefik-crowdsec-bouncer:v0.1.0
+    image: fbonalair/traefik-crowdsec-bouncer:${CROWDSEC_BOUNCER_VERSION:?required}
     container_name: crowdsec-traefik-bouncer
     restart: unless-stopped
     depends_on:
