@@ -5,52 +5,52 @@ services:
     restart: unless-stopped
     command:
       # Dashboard
-      - "--api.dashboard=true"
-      - "--api.insecure=false"
+      - --api.dashboard=true
+      - --api.insecure=false
 
       # Logging
-      - "--log.level=INFO"
+      - --log.level=INFO
 
       # Access Log
-      - "--accesslog=true"
-      - "--accesslog.format=json"
-      - "--accesslog.filepath=/var/log/traefik/access.log"
+      - --accesslog=true
+      - --accesslog.format=json
+      - --accesslog.filepath=/var/log/traefik/access.log
 
       # Ping
-      - "--ping=true"
-      - "--ping.entrypoint=ping"
+      - --ping=true
+      - --ping.entrypoint=ping
 
       # Providers
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.network=traefik-network"
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.network=traefik-network
 
       # EntryPoints
-      - "--entrypoints.ping.address=:8082"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      - --entrypoints.ping.address=:8082
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
       ## HTTP -> HTTPS Automatic Redirection
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
       ## Bu ayar, X-Forwarded-For başlığının silinmesini engeller. Cloudflare ve Docker NAT arkasında olduğun için bu şart.
-      - "--entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
-      - "--entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}"
+      - --entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_IPS}
+      - --entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}
 
       ####################################################################################################
       # HTTP Challenge (Alternative)
-      - "--certificatesresolvers.le-http.acme.email=${LE_EMAIL}"
-      - "--certificatesresolvers.le-http.acme.storage=/le-http-acme.json"
-      - "--certificatesresolvers.le-http.acme.httpchallenge=true"
-      - "--certificatesresolvers.le-http.acme.httpchallenge.entrypoint=web"
-      #- "--certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # Staging Let's Encrypt (Only Test) Server
+      - --certificatesresolvers.le-http.acme.email=${LE_EMAIL}
+      - --certificatesresolvers.le-http.acme.storage=/le-http-acme.json
+      - --certificatesresolvers.le-http.acme.httpchallenge=true
+      - --certificatesresolvers.le-http.acme.httpchallenge.entrypoint=web
+      #- --certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
       ####################################################################################################
       # DNS Challenge (Cloudflare)
-      - "--certificatesresolvers.le-cloudflare.acme.email=${LE_EMAIL}"
-      - "--certificatesresolvers.le-cloudflare.acme.storage=/le-cloudflare-acme.json"
-      - "--certificatesresolvers.le-cloudflare.acme.dnschallenge=true"
-      - "--certificatesresolvers.le-cloudflare.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.le-cloudflare.acme.dnschallenge.delaybeforecheck=0"
-      #- "--certificatesresolvers.le-cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory" # Staging Let's Encrypt (Only Test) Server
+      - --certificatesresolvers.le-cloudflare.acme.email=${LE_EMAIL}
+      - --certificatesresolvers.le-cloudflare.acme.storage=/le-cloudflare-acme.json
+      - --certificatesresolvers.le-cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.le-cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.le-cloudflare.acme.dnschallenge.delaybeforecheck=0
+      #- --certificatesresolvers.le-cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
       ####################################################################################################
     environment:
       CF_DNS_API_TOKEN: ${CLOUDFLARE_DNS_API_TOKEN}

@@ -5,27 +5,27 @@ services:
     restart: unless-stopped
     command:
       # Dashboard
-      - "--api.dashboard=true"
+      - --api.dashboard=true
 
       # Logging
-      - "--log.level=INFO"
+      - --log.level=INFO
 
       # Providers
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.file.filename=/etc/traefik/tls.yml"
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --providers.docker.endpoint=unix:///var/run/docker.sock
+      - --providers.file.filename=/etc/traefik/tls.yml
 
       # EntryPoints
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
       # HTTP -> HTTPS Auto Forwards
-      - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
-      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
 
       # Forwarded Headers Settings (Only Localhost for Development)
-      - "--entryPoints.web.forwardedHeaders.insecure=true"
-      - "--entryPoints.websecure.forwardedHeaders.insecure=true"
+      - --entryPoints.web.forwardedHeaders.insecure=true
+      - --entryPoints.websecure.forwardedHeaders.insecure=true
     ports:
       - 80:80
       - 443:443
