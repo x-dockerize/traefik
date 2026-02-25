@@ -136,6 +136,12 @@ services:
       CACHE_TTL: ${CROWDSEC_TRAEFIK_CACHE_TTL}
     networks:
       - traefik-network
+    healthcheck:
+      test: [ "CMD-SHELL", "nc -z 127.0.0.1 8080 || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
 
   crowdsec-manager:
     image: hhftechnology/crowdsec-manager:${CROWDSEC_MANAGER_VERSION:?required}
