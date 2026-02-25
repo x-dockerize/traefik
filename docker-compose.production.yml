@@ -68,27 +68,27 @@ services:
     networks:
       - traefik-network
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
 
       # TLS Domains for Wildcard Certificates
-      - "traefik.http.routers.traefik.tls.domains[0].main=${INTERNAL_SERVICE_DOMAIN}"
-      - "traefik.http.routers.traefik.tls.domains[0].sans=*.${INTERNAL_SERVICE_DOMAIN}"
+      - traefik.http.routers.traefik.tls.domains[0].main=${INTERNAL_SERVICE_DOMAIN}
+      - traefik.http.routers.traefik.tls.domains[0].sans=*.${INTERNAL_SERVICE_DOMAIN}
 
       # Traefik Dashboard Router
-      - "traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.tls.certresolver=le-http"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.middlewares=internal@docker" # Security Middleware
+      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.tls.certresolver=le-http
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.middlewares=internal@docker # Security Middleware
 
       # 1️⃣ IP Allowlist
-      - "traefik.http.middlewares.internal.ipallowlist.sourcerange=${INTERNAL_IP_ALLOWLIST}"
-      - "traefik.http.middlewares.internal.ipallowlist.ipstrategy.depth=1"
+      - traefik.http.middlewares.internal.ipallowlist.sourcerange=${INTERNAL_IP_ALLOWLIST}
+      - traefik.http.middlewares.internal.ipallowlist.ipstrategy.depth=1
 
       # 2️⃣ CrowdSec ForwardAuth
-      - "traefik.http.middlewares.crowdsec.forwardauth.address=http://crowdsec-traefik-bouncer:8080/api/v1/forwardAuth"
-      - "traefik.http.middlewares.crowdsec.forwardauth.trustForwardHeader=true"
-      - "traefik.http.middlewares.crowdsec.forwardauth.authResponseHeaders=X-Crowdsec-Reason"
+      - traefik.http.middlewares.crowdsec.forwardauth.address=http://crowdsec-traefik-bouncer:8080/api/v1/forwardAuth
+      - traefik.http.middlewares.crowdsec.forwardauth.trustForwardHeader=true
+      - traefik.http.middlewares.crowdsec.forwardauth.authResponseHeaders=X-Crowdsec-Reason
     healthcheck:
       test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8082/ping" ]
       interval: 10s
@@ -150,17 +150,17 @@ services:
     networks:
       - traefik-network
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
 
       # Routers
-      - "traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_DASHBOARD_HOST:-crowdsec.localhost}`)"
-      - "traefik.http.routers.crowdsec-manager.entrypoints=websecure"
-      - "traefik.http.routers.crowdsec-manager.tls.certresolver=le-http"
-      - "traefik.http.routers.crowdsec-manager.service=crowdsec-manager"
-      - "traefik.http.routers.crowdsec-manager.middlewares=internal@docker" # Security Middleware
+      - traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_DASHBOARD_HOST:-crowdsec.localhost}`)
+      - traefik.http.routers.crowdsec-manager.entrypoints=websecure
+      - traefik.http.routers.crowdsec-manager.tls.certresolver=le-http
+      - traefik.http.routers.crowdsec-manager.service=crowdsec-manager
+      - traefik.http.routers.crowdsec-manager.middlewares=internal@docker # Security Middleware
 
       # Services
-      - "traefik.http.services.crowdsec-manager.loadbalancer.server.port=8080"
+      - traefik.http.services.crowdsec-manager.loadbalancer.server.port=8080
 
 
 volumes:

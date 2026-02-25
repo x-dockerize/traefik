@@ -37,13 +37,13 @@ services:
     networks:
       - traefik-network
     labels:
-      - "traefik.enable=true"
+      - traefik.enable=true
 
       # Dashboard Router
-      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
-      - "traefik.http.routers.traefik.entrypoints=websecure"
-      - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.traefik.tls=true"
+      - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
+      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.service=api@internal
+      - traefik.http.routers.traefik.tls=true
     security_opt:
       - no-new-privileges:true
 
