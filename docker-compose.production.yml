@@ -115,7 +115,7 @@ services:
     restart: unless-stopped
     environment:
       COLLECTIONS: crowdsecurity/http-cve crowdsecurity/traefik
-      GID: ${CROWDSEC_GID:-1000}
+      GID: ${CROWDSEC_GID:?required}
       DISABLE_HUB_UPGRADE: ${CROWDSEC_HUB_UPGRADE_DISABLE}
     volumes:
       - ./.docker/crowdsec/data:/var/lib/crowdsec/data
