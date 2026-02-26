@@ -4,6 +4,6 @@ http:
       plugin:
         crowdsec-bouncer:
           crowdsecLapiKey: '{{ env "CROWDSEC_TRAEFIK_BOUNCER_API_KEY" }}'
-          crowdsecLapiHost: "http://crowdsec:8080"
+          crowdsecLapiHost: "crowdsec:8080"
           crowdsecMode: "stream"
           crowdsecDefaultDecisionOnCheckError: '{{ env "CROWDSEC_ON_ERROR" }}'
