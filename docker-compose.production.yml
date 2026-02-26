@@ -37,6 +37,7 @@ services:
       - --entrypoints.metrics.address=:8083
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.transport.respondingTimeouts.idleTimeout=3600s
       ## HTTP -> HTTPS Automatic Redirection
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
