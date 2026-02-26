@@ -38,6 +38,7 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.transport.respondingTimeouts.idleTimeout=3600s
+      - --entrypoints.websecure.http.middlewares=crowdsec@docker
       ## HTTP -> HTTPS Automatic Redirection
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
