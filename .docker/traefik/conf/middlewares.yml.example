@@ -1,0 +1,28 @@
+http:
+  middlewares:
+
+    # Trusted IPs: office, VPN, and server/worker IPs
+    # Used for: admin panels, restricted API endpoints
+    trusted:
+      ipAllowList:
+        sourceRange:
+          # --- Office IPs ---
+          # - 1.2.3.4/32  # Istanbul HQ
+          # - 5.6.7.8/32  # Ankara branch
+
+          # --- VPN IPs ---
+          # - 9.10.11.12/32  # VPN server 1
+
+          # --- Server / Worker IPs ---
+          # - 13.14.15.16/32  # API worker 1
+        ipStrategy:
+          depth: 1  # Cloudflare proxy ON (orange cloud): 1 — OFF (grey cloud): 0
+
+    # Internal IPs: Headscale/Tailscale mesh network
+    # Used for: service-to-service communication via .internal. domains
+    internal:
+      ipAllowList:
+        sourceRange:
+          # - 100.64.0.0/10  # Headscale default CGNAT range
+        ipStrategy:
+          depth: 1  # Cloudflare proxy ON (orange cloud): 1 — OFF (grey cloud): 0
