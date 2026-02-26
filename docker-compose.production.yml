@@ -38,7 +38,7 @@ services:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.transport.respondingTimeouts.idleTimeout=3600s
-      - --entrypoints.websecure.http.middlewares=crowdsec@docker
+      - --entrypoints.websecure.http.middlewares=crowdsec@file
       ## HTTP -> HTTPS Automatic Redirection
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
@@ -68,6 +68,8 @@ services:
       - --metrics.prometheus.entrypoint=metrics
     environment:
       CF_DNS_API_TOKEN: ${CLOUDFLARE_DNS_API_TOKEN}
+      CROWDSEC_TRAEFIK_BOUNCER_API_KEY: ${CROWDSEC_TRAEFIK_BOUNCER_API_KEY}
+      CROWDSEC_ON_ERROR: ${CROWDSEC_ON_ERROR:-ban}
     security_opt:
       - no-new-privileges:true
     ports:
@@ -99,11 +101,7 @@ services:
       - traefik.http.routers.traefik.service=api@internal
       - traefik.http.routers.traefik.middlewares=trusted@file # Security Middleware
 
-      # CrowdSec Bouncer Plugin
-      - traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.crowdseclapikey=${CROWDSEC_TRAEFIK_BOUNCER_API_KEY:?required}
-      - traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.crowdseclapihost=http://crowdsec:8080
-      - traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.crowdsecsmode=stream
-      - traefik.http.middlewares.crowdsec.plugin.crowdsec-bouncer.crowdsecdefaultdecisiononcheckerror=${CROWDSEC_ON_ERROR:-ban}
+
     healthcheck:
       test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8082/ping" ]
       interval: 10s
