@@ -36,20 +36,20 @@ services:
       ## HTTP -> HTTPS Automatic Redirection
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
-      ## Bu ayar, X-Forwarded-For başlığının silinmesini engeller. Cloudflare ve Docker NAT arkasında olduğun için bu şart.
-      - --entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_IPS}
-      - --entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_IPS}
+      ## Preserves X-Forwarded-For headers. Required when running behind Cloudflare and Docker NAT.
+      - --entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_PROXIES}
+      - --entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_PROXIES}
 
       ####################################################################################################
       # HTTP Challenge (Alternative)
-      - --certificatesresolvers.le-http.acme.email=${LE_EMAIL:?required}
+      - --certificatesresolvers.le-http.acme.email=${LETSENCRYPT_EMAIL:?required}
       - --certificatesresolvers.le-http.acme.storage=/le-http-acme.json
       - --certificatesresolvers.le-http.acme.httpchallenge=true
       - --certificatesresolvers.le-http.acme.httpchallenge.entrypoint=web
       #- --certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
       ####################################################################################################
       # DNS Challenge (Cloudflare)
-      - --certificatesresolvers.le-cloudflare.acme.email=${LE_EMAIL:?required}
+      - --certificatesresolvers.le-cloudflare.acme.email=${LETSENCRYPT_EMAIL:?required}
       - --certificatesresolvers.le-cloudflare.acme.storage=/le-cloudflare-acme.json
       - --certificatesresolvers.le-cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.le-cloudflare.acme.dnschallenge.provider=cloudflare
@@ -76,8 +76,8 @@ services:
       - traefik.enable=true
 
       # TLS Domains for Wildcard Certificates
-      - traefik.http.routers.traefik.tls.domains[0].main=${INTERNAL_SERVICE_DOMAIN:?required}
-      - traefik.http.routers.traefik.tls.domains[0].sans=*.${INTERNAL_SERVICE_DOMAIN:?required}
+      - traefik.http.routers.traefik.tls.domains[0].main=${WILDCARD_DOMAIN:?required}
+      - traefik.http.routers.traefik.tls.domains[0].sans=*.${WILDCARD_DOMAIN:?required}
 
       # Traefik Dashboard Router
       - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)
@@ -155,7 +155,7 @@ services:
     environment:
       CROWDSEC_LAPI_URL: http://crowdsec:8080
       CROWDSEC_LAPI_KEY: ${CROWDSEC_MANAGER_API_KEY}
-      TZ: ${TZ:-Europe/Istanbul}
+      TZ: ${CROWDSEC_MANAGER_TZ:-Europe/Istanbul}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
