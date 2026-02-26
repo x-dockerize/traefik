@@ -49,14 +49,14 @@ services:
       ####################################################################################################
       # HTTP Challenge (Alternative)
       - --certificatesresolvers.le-http.acme.email=${LETSENCRYPT_EMAIL:?required}
-      - --certificatesresolvers.le-http.acme.storage=/le-http-acme.json
+      - --certificatesresolvers.le-http.acme.storage=/etc/traefik/acme/le-http.json
       - --certificatesresolvers.le-http.acme.httpchallenge=true
       - --certificatesresolvers.le-http.acme.httpchallenge.entrypoint=web
       #- --certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
       ####################################################################################################
       # DNS Challenge (Cloudflare)
       - --certificatesresolvers.le-cloudflare.acme.email=${LETSENCRYPT_EMAIL:?required}
-      - --certificatesresolvers.le-cloudflare.acme.storage=/le-cloudflare-acme.json
+      - --certificatesresolvers.le-cloudflare.acme.storage=/etc/traefik/acme/le-cloudflare.json
       - --certificatesresolvers.le-cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.le-cloudflare.acme.dnschallenge.provider=cloudflare
       - --certificatesresolvers.le-cloudflare.acme.dnschallenge.delaybeforecheck=0
@@ -74,8 +74,7 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./.docker/traefik/le-http-acme.json:/le-http-acme.json # ACME certificate storage
-      - ./.docker/traefik/le-cloudflare-acme.json:/le-cloudflare-acme.json # ACME certificate storage
+      - ./.docker/traefik/acme:/etc/traefik/acme # ACME certificate storage
       - ./.docker/traefik/conf:/etc/traefik/conf:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro # Required for Docker provider

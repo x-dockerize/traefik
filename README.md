@@ -105,13 +105,7 @@ cp docker-compose.production.yml docker-compose.yml
 Production ortamında SSL sertifikalarının saklanacağı dosya oluşturun ve izinlerini ayarlayın:
 
 ```bash
-# Http Challenge için
-touch .docker/traefik/le-http-acme.json
-chmod 600 .docker/traefik/le-http-acme.json
 
-# Cloudflare DNS Challenge için (Eğer kullanıyorsanız)
-touch .docker/traefik/le-cloudflare-acme.json
-chmod 600 .docker/traefik/le-cloudflare-acme.json
 ```
 
 ### 4. Traefik Konteynerini Başlatın:
