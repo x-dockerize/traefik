@@ -90,6 +90,42 @@ set_env CROWDSEC_DASHBOARD_HOST      "$CROWDSEC_DASHBOARD_HOST"
 set_env CROWDSEC_GID                 "$CROWDSEC_GID"
 
 # --------------------------------------------------
+# CrowdSec API Key Otomatik Üretme (Opsiyonel)
+# --------------------------------------------------
+echo
+read -rp "CrowdSec API key'leri otomatik oluşturulsun mu? (e/h): " AUTO_CROWDSEC
+if [[ "$AUTO_CROWDSEC" =~ ^[Ee]$ ]]; then
+  echo "⏳ CrowdSec başlatılıyor..."
+  docker compose -f docker-compose.production.yml up -d crowdsec
+
+  echo "⏳ CrowdSec hazır olana kadar bekleniyor..."
+  until docker exec crowdsec cscli lapi status > /dev/null 2>&1; do
+    sleep 2
+  done
+
+  BOUNCER_KEY=$(docker exec crowdsec cscli bouncers add traefik-bouncer --output raw 2>/dev/null || true)
+  MANAGER_KEY=$(docker exec crowdsec cscli bouncers add crowdsec-manager --output raw 2>/dev/null || true)
+
+  if [ -n "$BOUNCER_KEY" ]; then
+    set_env CROWDSEC_TRAEFIK_BOUNCER_API_KEY "$BOUNCER_KEY"
+    echo "✅ CROWDSEC_TRAEFIK_BOUNCER_API_KEY oluşturuldu"
+  else
+    echo "ℹ️  traefik-bouncer zaten mevcut, CROWDSEC_TRAEFIK_BOUNCER_API_KEY güncellenmedi"
+  fi
+
+  if [ -n "$MANAGER_KEY" ]; then
+    set_env CROWDSEC_MANAGER_API_KEY "$MANAGER_KEY"
+    echo "✅ CROWDSEC_MANAGER_API_KEY oluşturuldu"
+  else
+    echo "ℹ️  crowdsec-manager zaten mevcut, CROWDSEC_MANAGER_API_KEY güncellenmedi"
+  fi
+
+  CROWDSEC_AUTO=true
+else
+  CROWDSEC_AUTO=false
+fi
+
+# --------------------------------------------------
 # Sonuçları Göster
 # --------------------------------------------------
 echo
@@ -99,19 +135,24 @@ echo "-----------------------------------------------"
 echo "🌐 Traefik   : https://$TRAEFIK_DASHBOARD_HOST"
 echo "🛡️ CrowdSec  : https://$CROWDSEC_DASHBOARD_HOST"
 echo "-----------------------------------------------"
-echo "⚠️ Kurulum tamamlanmadan önce yapılması gerekenler:"
-echo ""
-echo " 1. Önce sadece CrowdSec'i başlatın:"
-echo "     docker compose up -d crowdsec"
-echo ""
-echo "  2. Traefik bouncer API key üretin ve .env'e ekleyin:"
-echo "     docker exec crowdsec cscli bouncers add traefik-bouncer"
-echo "     → CROWDSEC_TRAEFIK_BOUNCER_API_KEY=<üretilen_key>"
-echo ""
-echo "  3. CrowdSec Manager API key üretin ve .env'e ekleyin:"
-echo "     docker exec crowdsec cscli bouncers add crowdsec-manager"
-echo "     → CROWDSEC_MANAGER_API_KEY=<üretilen_key>"
-echo ""
-echo "  4. Tüm servisleri başlatın:"
-echo "     docker compose up -d"
+if [ "$CROWDSEC_AUTO" = true ]; then
+  echo "▶️  Tüm servisleri başlatmak için:"
+  echo "   docker compose up -d"
+else
+  echo "⚠️  Kurulum tamamlanmadan önce yapılması gerekenler:"
+  echo ""
+  echo "  1. Önce sadece CrowdSec'i başlatın:"
+  echo "     docker compose up -d crowdsec"
+  echo ""
+  echo "  2. Traefik bouncer API key üretin ve .env'e ekleyin:"
+  echo "     docker exec crowdsec cscli bouncers add traefik-bouncer"
+  echo "     → CROWDSEC_TRAEFIK_BOUNCER_API_KEY=<üretilen_key>"
+  echo ""
+  echo "  3. CrowdSec Manager API key üretin ve .env'e ekleyin:"
+  echo "     docker exec crowdsec cscli bouncers add crowdsec-manager"
+  echo "     → CROWDSEC_MANAGER_API_KEY=<üretilen_key>"
+  echo ""
+  echo "  4. Tüm servisleri başlatın:"
+  echo "     docker compose up -d"
+fi
 echo "==============================================="
