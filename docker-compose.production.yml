@@ -121,8 +121,8 @@ services:
       GID: ${CROWDSEC_GID:-1000}
       DISABLE_HUB_UPGRADE: ${CROWDSEC_HUB_UPGRADE_DISABLE}
     volumes:
-      - crowdsec-data:/var/lib/crowdsec/data
-      - crowdsec-config:/etc/crowdsec
+      - ./.docker/crowdsec/data:/var/lib/crowdsec/data
+      - ./.docker/crowdsec/config:/etc/crowdsec
       - ./.docker/crowdsec/acquis.yaml:/etc/crowdsec/acquis.yaml:ro
       - ./.docker/crowdsec/whitelists:/etc/crowdsec/parsers/s02-enrich/whitelists:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro # Required to read Traefik container logs
@@ -168,13 +168,6 @@ services:
 
       # Services
       - traefik.http.services.crowdsec-manager.loadbalancer.server.port=8080
-
-
-volumes:
-  crowdsec-data:
-    driver: local
-  crowdsec-config:
-    driver: local
 
 
 networks:
