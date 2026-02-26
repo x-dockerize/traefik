@@ -25,4 +25,4 @@ http:
         sourceRange:
           # - 100.64.0.0/10  # Headscale default CGNAT range
         ipStrategy:
-          depth: 1  # Cloudflare proxy ON (orange cloud): 1 — OFF (grey cloud): 0
+          depth: 0  # Headscale traffic is direct (not proxied through Cloudflare)

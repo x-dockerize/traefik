@@ -64,12 +64,12 @@ services:
       - 80:80
       - 443:443
     volumes:
-      - ./.docker/traefik/le-http-acme.json:/le-http-acme.json # SSL sertifikalarının saklanacağı dosya
-      - ./.docker/traefik/le-cloudflare-acme.json:/le-cloudflare-acme.json # SSL sertifikalarının saklanacağı dosya
+      - ./.docker/traefik/le-http-acme.json:/le-http-acme.json # ACME certificate storage
+      - ./.docker/traefik/le-cloudflare-acme.json:/le-cloudflare-acme.json # ACME certificate storage
       - ./.docker/traefik/conf:/etc/traefik/conf:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/log/traefik:/var/log/traefik
-      - /var/run/docker.sock:/var/run/docker.sock:ro # Docker'ı dinlemesi için şart
+      - /var/run/docker.sock:/var/run/docker.sock:ro # Required for Docker provider
     networks:
       - traefik-network
     labels:
@@ -86,7 +86,7 @@ services:
       - traefik.http.routers.traefik.service=api@internal
       - traefik.http.routers.traefik.middlewares=trusted@file # Security Middleware
 
-      # 2️⃣ CrowdSec ForwardAuth
+      # CrowdSec ForwardAuth
       - traefik.http.middlewares.crowdsec.forwardauth.address=http://crowdsec-traefik-bouncer:8080/api/v1/forwardAuth
       - traefik.http.middlewares.crowdsec.forwardauth.trustForwardHeader=true
       - traefik.http.middlewares.crowdsec.forwardauth.authResponseHeaders=X-Crowdsec-Reason
