@@ -1,8 +1,9 @@
 # -------------------
 # Traefik access log
 # -------------------
-filenames:
-  - /var/log/traefik/access.log
+source: docker
+container_name:
+  - traefik
 labels:
   type: traefik
 
