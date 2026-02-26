@@ -2,7 +2,7 @@ http:
   middlewares:
 
     # Trusted IPs: office, VPN, and server/worker IPs
-    # Used for: admin panels, restricted API endpoints
+    # Used for: routes behind Cloudflare proxy (orange cloud ON)
     trusted:
       ipAllowList:
         sourceRange:
@@ -16,7 +16,24 @@ http:
           # --- Server / Worker IPs ---
           # - 13.14.15.16/32  # API worker 1
         ipStrategy:
-          depth: 1  # Cloudflare proxy ON (orange cloud): 1 — OFF (grey cloud): 0
+          depth: 1  # Cloudflare proxy ON (orange cloud)
+
+    # Trusted IPs (direct): same allowlist but for routes bypassing Cloudflare proxy (grey cloud)
+    # Used for: subdomains where Cloudflare proxy is OFF
+    trusted-direct:
+      ipAllowList:
+        sourceRange:
+          # --- Office IPs ---
+          # - 1.2.3.4/32  # Istanbul HQ
+          # - 5.6.7.8/32  # Ankara branch
+
+          # --- VPN IPs ---
+          # - 9.10.11.12/32  # VPN server 1
+
+          # --- Server / Worker IPs ---
+          # - 13.14.15.16/32  # API worker 1
+        ipStrategy:
+          depth: 0  # Cloudflare proxy OFF (grey cloud)
 
     # Internal IPs: Headscale/Tailscale mesh network
     # Used for: service-to-service communication via .internal. domains

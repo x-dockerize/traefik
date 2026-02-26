@@ -99,7 +99,8 @@ services:
       - traefik.http.routers.traefik.entrypoints=websecure
       - traefik.http.routers.traefik.tls.certresolver=le-http
       - traefik.http.routers.traefik.service=api@internal
-      - traefik.http.routers.traefik.middlewares=trusted@file # Security Middleware
+      - traefik.http.routers.traefik.middlewares=trusted@file # Security Middleware (Cloudflare proxy ON)
+      #- traefik.http.routers.traefik.middlewares=trusted-direct@file # Security Middleware (Cloudflare proxy OFF)
 
 
     healthcheck:
@@ -161,7 +162,8 @@ services:
       - traefik.http.routers.crowdsec-manager.entrypoints=websecure
       - traefik.http.routers.crowdsec-manager.tls.certresolver=le-http
       - traefik.http.routers.crowdsec-manager.service=crowdsec-manager
-      - traefik.http.routers.crowdsec-manager.middlewares=trusted@file # Security Middleware
+      - traefik.http.routers.crowdsec-manager.middlewares=trusted@file # Security Middleware (Cloudflare proxy ON)
+      #- traefik.http.routers.crowdsec-manager.middlewares=trusted-direct@file # Security Middleware (Cloudflare proxy OFF)
 
       # Services
       - traefik.http.services.crowdsec-manager.loadbalancer.server.port=8080
