@@ -1,0 +1,7 @@
+http:
+  middlewares:
+    hideServerInfo:
+      headers:
+        customResponseHeaders:
+          X-Powered-By: ""
+          Server: ""
