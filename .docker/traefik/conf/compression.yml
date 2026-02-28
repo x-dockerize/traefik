@@ -3,3 +3,6 @@ http:
     gzip:
       compress:
         minResponseBodyBytes: 1024
+        encodings:
+          - zstd
+          - gzip
