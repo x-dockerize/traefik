@@ -90,19 +90,13 @@ services:
     labels:
       - traefik.enable=true
 
-      # TLS Domains for Wildcard Certificates
-      - traefik.http.routers.traefik.tls.domains[0].main=${WILDCARD_DOMAIN:?required}
-      - traefik.http.routers.traefik.tls.domains[0].sans=*.${WILDCARD_DOMAIN:?required}
-
       # Traefik Dashboard Router
       - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)
       - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.tls.certresolver=le-http
+      - traefik.http.routers.traefik.tls.certresolver=${CERT_RESOLVER:-le-http}
       - traefik.http.routers.traefik.service=api@internal
       - traefik.http.routers.traefik.middlewares=trusted@file # Security Middleware (Cloudflare proxy ON)
       #- traefik.http.routers.traefik.middlewares=trusted-direct@file # Security Middleware (Cloudflare proxy OFF)
-
-
     healthcheck:
       test: [ "CMD", "wget", "--spider", "-q", "http://localhost:8082/ping" ]
       interval: 10s
@@ -160,7 +154,7 @@ services:
       # Routers
       - traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_DASHBOARD_HOST:-crowdsec.localhost}`)
       - traefik.http.routers.crowdsec-manager.entrypoints=websecure
-      - traefik.http.routers.crowdsec-manager.tls.certresolver=le-http
+      - traefik.http.routers.crowdsec-manager.tls.certresolver=${CERT_RESOLVER:-le-http}
       - traefik.http.routers.crowdsec-manager.service=crowdsec-manager
       - traefik.http.routers.crowdsec-manager.middlewares=trusted@file # Security Middleware (Cloudflare proxy ON)
       #- traefik.http.routers.crowdsec-manager.middlewares=trusted-direct@file # Security Middleware (Cloudflare proxy OFF)
