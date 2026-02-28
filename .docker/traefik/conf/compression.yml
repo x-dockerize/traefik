@@ -1,6 +1,6 @@
 http:
   middlewares:
-    gzip:
+    compression:
       compress:
         minResponseBodyBytes: 1024
         encodings:
