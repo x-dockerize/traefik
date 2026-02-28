@@ -109,7 +109,7 @@ services:
     container_name: crowdsec
     restart: unless-stopped
     environment:
-      COLLECTIONS: crowdsecurity/http-cve crowdsecurity/traefik crowdsecurity/http-crawl-non-stealthy-scanners crowdsecurity/http-bad-user-agents crowdsecurity/http-generic-bf crowdsecurity/appsec-virtual-patching
+      COLLECTIONS: crowdsecurity/http-cve crowdsecurity/traefik crowdsecurity/experimental-no-user-agent
       GID: ${CROWDSEC_GID:?required}
       DISABLE_HUB_UPGRADE: ${CROWDSEC_HUB_UPGRADE_DISABLE}
     volumes:
