@@ -152,7 +152,7 @@ services:
       - traefik.enable=true
 
       # Routers
-      - traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_DASHBOARD_HOST:-crowdsec.localhost}`)
+      - traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_MANAGER_DASHBOARD_HOST:-crowdsec.localhost}`)
       - traefik.http.routers.crowdsec-manager.entrypoints=websecure
       - traefik.http.routers.crowdsec-manager.tls.certresolver=${CERT_RESOLVER:-le-http}
       - traefik.http.routers.crowdsec-manager.service=crowdsec-manager

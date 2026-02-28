@@ -45,17 +45,29 @@ set_env() {
 # --------------------------------------------------
 # Kullanıcıdan Gerekli Bilgiler
 # --------------------------------------------------
-read -rp "WILDCARD_DOMAIN (örn: example.com): " WILDCARD_DOMAIN
+read -rp "Base domain (örn: example.com, dashboard host'ları için kullanılır): " BASE_DOMAIN
 read -rp "LETSENCRYPT_EMAIL: " LETSENCRYPT_EMAIL
-read -rp "CLOUDFLARE_DNS_API_TOKEN: " CLOUDFLARE_DNS_API_TOKEN
+
+echo
+echo "--- Sertifika Çözümleyici ---"
+echo "  1) le-http       — HTTP challenge (varsayılan, Cloudflare gerektirmez)"
+echo "  2) le-cloudflare — DNS challenge  (Cloudflare API token gerektirir)"
+read -rp "Seçim (boş bırakılırsa: le-http): " INPUT_CERT_RESOLVER
+if [[ "$INPUT_CERT_RESOLVER" == "2" || "$INPUT_CERT_RESOLVER" == "le-cloudflare" ]]; then
+  CERT_RESOLVER="le-cloudflare"
+  read -rp "CLOUDFLARE_DNS_API_TOKEN: " CLOUDFLARE_DNS_API_TOKEN
+else
+  CERT_RESOLVER="le-http"
+  CLOUDFLARE_DNS_API_TOKEN=""
+fi
 
 echo
 echo "--- Dashboard Hostları ---"
-read -rp "TRAEFIK_DASHBOARD_HOST (boş bırakılırsa: traefik.${WILDCARD_DOMAIN}): " INPUT_TRAEFIK_HOST
-TRAEFIK_DASHBOARD_HOST="${INPUT_TRAEFIK_HOST:-traefik.${WILDCARD_DOMAIN}}"
+read -rp "TRAEFIK_DASHBOARD_HOST (boş bırakılırsa: traefik.${BASE_DOMAIN}): " INPUT_TRAEFIK_HOST
+TRAEFIK_DASHBOARD_HOST="${INPUT_TRAEFIK_HOST:-traefik.${BASE_DOMAIN}}"
 
-read -rp "CROWDSEC_DASHBOARD_HOST (boş bırakılırsa: crowdsec.${WILDCARD_DOMAIN}): " INPUT_CROWDSEC_HOST
-CROWDSEC_DASHBOARD_HOST="${INPUT_CROWDSEC_HOST:-crowdsec.${WILDCARD_DOMAIN}}"
+read -rp "CROWDSEC_MANAGER_DASHBOARD_HOST (boş bırakılırsa: crowdsec.${BASE_DOMAIN}): " INPUT_CROWDSEC_HOST
+CROWDSEC_MANAGER_DASHBOARD_HOST="${INPUT_CROWDSEC_HOST:-crowdsec.${BASE_DOMAIN}}"
 
 # --------------------------------------------------
 # Docker GID — otomatik tespit
@@ -82,12 +94,12 @@ fi
 # --------------------------------------------------
 # .env Güncelle
 # --------------------------------------------------
-set_env WILDCARD_DOMAIN              "$WILDCARD_DOMAIN"
-set_env LETSENCRYPT_EMAIL            "$LETSENCRYPT_EMAIL"
-set_env CLOUDFLARE_DNS_API_TOKEN     "$CLOUDFLARE_DNS_API_TOKEN"
-set_env TRAEFIK_DASHBOARD_HOST       "$TRAEFIK_DASHBOARD_HOST"
-set_env CROWDSEC_DASHBOARD_HOST      "$CROWDSEC_DASHBOARD_HOST"
-set_env CROWDSEC_GID                 "$CROWDSEC_GID"
+set_env LETSENCRYPT_EMAIL                "$LETSENCRYPT_EMAIL"
+set_env CERT_RESOLVER                    "$CERT_RESOLVER"
+set_env CLOUDFLARE_DNS_API_TOKEN         "$CLOUDFLARE_DNS_API_TOKEN"
+set_env TRAEFIK_DASHBOARD_HOST           "$TRAEFIK_DASHBOARD_HOST"
+set_env CROWDSEC_MANAGER_DASHBOARD_HOST  "$CROWDSEC_MANAGER_DASHBOARD_HOST"
+set_env CROWDSEC_GID                     "$CROWDSEC_GID"
 
 # --------------------------------------------------
 # CrowdSec API Key Otomatik Üretme (Opsiyonel)
@@ -133,7 +145,7 @@ echo "==============================================="
 echo "✅ Traefik .env başarıyla hazırlandı!"
 echo "-----------------------------------------------"
 echo "🌐 Traefik   : https://$TRAEFIK_DASHBOARD_HOST"
-echo "🛡️ CrowdSec  : https://$CROWDSEC_DASHBOARD_HOST"
+echo "🛡️ CrowdSec  : https://$CROWDSEC_MANAGER_DASHBOARD_HOST"
 echo "-----------------------------------------------"
 if [ "$CROWDSEC_AUTO" = true ]; then
   echo "▶️  Tüm servisleri başlatmak için:"
