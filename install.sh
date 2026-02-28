@@ -50,14 +50,14 @@ read -rp "LETSENCRYPT_EMAIL: " LETSENCRYPT_EMAIL
 
 echo
 echo "--- Sertifika Çözümleyici ---"
-echo "  1) le-http       — HTTP challenge (varsayılan, Cloudflare gerektirmez)"
-echo "  2) le-cloudflare — DNS challenge  (Cloudflare API token gerektirir)"
-read -rp "Seçim (boş bırakılırsa: le-http): " INPUT_CERT_RESOLVER
-if [[ "$INPUT_CERT_RESOLVER" == "2" || "$INPUT_CERT_RESOLVER" == "le-cloudflare" ]]; then
-  CERT_RESOLVER="le-cloudflare"
+echo "  1) letsencrypt — HTTP challenge (varsayılan, Cloudflare gerektirmez)"
+echo "  2) cloudflare  — DNS challenge  (Cloudflare API token gerektirir)"
+read -rp "Seçim (boş bırakılırsa: letsencrypt): " INPUT_CERT_RESOLVER
+if [[ "$INPUT_CERT_RESOLVER" == "2" || "$INPUT_CERT_RESOLVER" == "cloudflare" ]]; then
+  CERT_RESOLVER="cloudflare"
   read -rp "CLOUDFLARE_DNS_API_TOKEN: " CLOUDFLARE_DNS_API_TOKEN
 else
-  CERT_RESOLVER="le-http"
+  CERT_RESOLVER="letsencrypt"
   CLOUDFLARE_DNS_API_TOKEN=""
 fi
 

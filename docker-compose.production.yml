@@ -35,33 +35,33 @@ services:
       # EntryPoints
       - --entrypoints.ping.address=:8082
       - --entrypoints.metrics.address=:8083
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --entrypoints.websecure.transport.respondingTimeouts.idleTimeout=3600s
-      - --entrypoints.websecure.http.middlewares=crowdsec@file
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
+      - --entrypoints.https.transport.respondingTimeouts.idleTimeout=3600s
+      - --entrypoints.https.http.middlewares=crowdsec@file
       ## HTTP -> HTTPS Automatic Redirection
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.http.http.redirections.entryPoint.to=https
+      - --entrypoints.http.http.redirections.entryPoint.scheme=https
       ## Preserves X-Forwarded-For headers. Required when running behind Cloudflare and Docker NAT.
-      - --entryPoints.web.forwardedHeaders.trustedIPs=${TRUSTED_PROXIES}
-      - --entryPoints.websecure.forwardedHeaders.trustedIPs=${TRUSTED_PROXIES}
+      - --entryPoints.http.forwardedHeaders.trustedIPs=${TRUSTED_PROXIES}
+      - --entryPoints.https.forwardedHeaders.trustedIPs=${TRUSTED_PROXIES}
 
-      ####################################################################################################
-      # HTTP Challenge (Alternative)
-      - --certificatesresolvers.le-http.acme.email=${LETSENCRYPT_EMAIL:?required}
-      - --certificatesresolvers.le-http.acme.storage=/etc/traefik/acme/le-http.json
-      - --certificatesresolvers.le-http.acme.httpchallenge=true
-      - --certificatesresolvers.le-http.acme.httpchallenge.entrypoint=web
-      #- --certificatesresolvers.le-http.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
-      ####################################################################################################
+      ##################################################################################################################
+      # HTTP Challenge (letsencrypt)
+      - --certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL:?required}
+      - --certificatesresolvers.letsencrypt.acme.storage=/etc/traefik/acme/letsencrypt.json
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=http
+      #- --certificatesresolvers.letsencrypt.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
+      ##################################################################################################################
       # DNS Challenge (Cloudflare)
-      - --certificatesresolvers.le-cloudflare.acme.email=${LETSENCRYPT_EMAIL:?required}
-      - --certificatesresolvers.le-cloudflare.acme.storage=/etc/traefik/acme/le-cloudflare.json
-      - --certificatesresolvers.le-cloudflare.acme.dnschallenge=true
-      - --certificatesresolvers.le-cloudflare.acme.dnschallenge.provider=cloudflare
-      - --certificatesresolvers.le-cloudflare.acme.dnschallenge.delaybeforecheck=0
-      #- --certificatesresolvers.le-cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
-      ####################################################################################################
+      - --certificatesresolvers.cloudflare.acme.email=${LETSENCRYPT_EMAIL:?required}
+      - --certificatesresolvers.cloudflare.acme.storage=/etc/traefik/acme/cloudflare.json
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.delaybeforecheck=0
+      #- --certificatesresolvers.cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory # Staging Let's Encrypt (Only Test) Server
+      ##################################################################################################################
 
       # Metrics
       - --metrics.prometheus=true
@@ -92,8 +92,8 @@ services:
 
       # Traefik Dashboard Router
       - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_DASHBOARD_HOST:-traefik.localhost}`)
-      - traefik.http.routers.traefik.entrypoints=websecure
-      - traefik.http.routers.traefik.tls.certresolver=${CERT_RESOLVER:-le-http}
+      - traefik.http.routers.traefik.entrypoints=https
+      - traefik.http.routers.traefik.tls.certresolver=${CERT_RESOLVER:-letsencrypt}
       - traefik.http.routers.traefik.service=api@internal
       - traefik.http.routers.traefik.middlewares=trusted@file # Security Middleware (Cloudflare proxy ON)
       #- traefik.http.routers.traefik.middlewares=trusted-direct@file # Security Middleware (Cloudflare proxy OFF)
@@ -153,8 +153,8 @@ services:
 
       # Routers
       - traefik.http.routers.crowdsec-manager.rule=Host(`${CROWDSEC_MANAGER_DASHBOARD_HOST:-crowdsec.localhost}`)
-      - traefik.http.routers.crowdsec-manager.entrypoints=websecure
-      - traefik.http.routers.crowdsec-manager.tls.certresolver=${CERT_RESOLVER:-le-http}
+      - traefik.http.routers.crowdsec-manager.entrypoints=https
+      - traefik.http.routers.crowdsec-manager.tls.certresolver=${CERT_RESOLVER:-letsencrypt}
       - traefik.http.routers.crowdsec-manager.service=crowdsec-manager
       - traefik.http.routers.crowdsec-manager.middlewares=trusted@file # Security Middleware (Cloudflare proxy ON)
       #- traefik.http.routers.crowdsec-manager.middlewares=trusted-direct@file # Security Middleware (Cloudflare proxy OFF)

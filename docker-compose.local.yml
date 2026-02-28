@@ -17,15 +17,15 @@ services:
       - --providers.file.filename=/etc/traefik/tls.yml
 
       # EntryPoints
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
+      - --entrypoints.http.address=:80
+      - --entrypoints.https.address=:443
       # HTTP -> HTTPS Auto Forwards
-      - --entrypoints.web.http.redirections.entryPoint.to=websecure
-      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.http.http.redirections.entryPoint.to=https
+      - --entrypoints.http.http.redirections.entryPoint.scheme=https
 
       # Forwarded Headers Settings (Only Localhost for Development)
-      - --entryPoints.web.forwardedHeaders.insecure=true
-      - --entryPoints.websecure.forwardedHeaders.insecure=true
+      - --entryPoints.http.forwardedHeaders.insecure=true
+      - --entryPoints.https.forwardedHeaders.insecure=true
     ports:
       - 80:80
       - 443:443
@@ -41,7 +41,7 @@ services:
 
       # Dashboard Router
       - traefik.http.routers.traefik.rule=Host(`traefik.localhost`)
-      - traefik.http.routers.traefik.entrypoints=websecure
+      - traefik.http.routers.traefik.entrypoints=https
       - traefik.http.routers.traefik.service=api@internal
       - traefik.http.routers.traefik.tls=true
     security_opt:
