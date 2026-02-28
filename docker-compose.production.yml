@@ -137,7 +137,7 @@ services:
     environment:
       CROWDSEC_LAPI_URL: http://crowdsec:8080
       CROWDSEC_LAPI_KEY: ${CROWDSEC_MANAGER_API_KEY}
-      TZ: ${CROWDSEC_MANAGER_TZ:-Europe/Istanbul}
+      TZ: ${CROWDSEC_MANAGER_TZ:-UTC}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
