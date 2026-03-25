@@ -1,11 +1,14 @@
 http:
   middlewares:
-
     # Trusted IPs: office, VPN, and server/worker IPs
     # Used for: routes behind Cloudflare proxy (orange cloud ON)
     trusted:
       ipAllowList:
         sourceRange:
+          # --- Tailscale / Headscale IPs ---
+          - 100.64.0.0/10    # Headscale default CGNAT range
+          - 172.18.0.1/32    # Docker bridge gateway (Tailscale traffic is NAT'd by Docker)
+
           # --- Office IPs ---
           # - 1.2.3.4/32  # Istanbul HQ
           # - 5.6.7.8/32  # Ankara branch
@@ -23,6 +26,10 @@ http:
     trusted-direct:
       ipAllowList:
         sourceRange:
+          # --- Tailscale / Headscale IPs ---
+          - 100.64.0.0/10    # Headscale default CGNAT range
+          - 172.18.0.1/32    # Docker bridge gateway (Tailscale traffic is NAT'd by Docker)
+
           # --- Office IPs ---
           # - 1.2.3.4/32  # Istanbul HQ
           # - 5.6.7.8/32  # Ankara branch
@@ -40,6 +47,7 @@ http:
     internal:
       ipAllowList:
         sourceRange:
-          # - 100.64.0.0/10  # Headscale default CGNAT range
+          - 100.64.0.0/10    # Headscale default CGNAT range
+          - 172.18.0.1/32    # Docker bridge gateway (Tailscale traffic is NAT'd by Docker)
         ipStrategy:
           depth: 0  # Headscale traffic is direct (not proxied through Cloudflare)
