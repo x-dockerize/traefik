@@ -1,0 +1,10 @@
+http:
+  middlewares:
+    rateLimit:
+      rateLimit:
+        average: 100
+        burst: 40
+        period: 1m
+        sourceCriterion:
+          ipStrategy:
+            depth: 1  # Cloudflare proxy ON: read real client IP from X-Forwarded-For
