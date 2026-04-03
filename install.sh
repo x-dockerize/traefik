@@ -3,8 +3,8 @@ set -e
 
 ENV_EXAMPLE=".env.example"
 ENV_FILE=".env"
-MIDDLEWARES_EXAMPLE=".docker/traefik/conf/middlewares.yml.example"
-MIDDLEWARES_FILE=".docker/traefik/conf/middlewares.yml"
+TEMPLATES_DIR=".docker/traefik/conf/templates"
+ENABLED_DIR=".docker/traefik/conf/enabled"
 
 # --------------------------------------------------
 # Kontroller
@@ -21,11 +21,22 @@ else
   echo "ℹ️  $ENV_FILE mevcut, güncellenecek"
 fi
 
-if [ ! -f "$MIDDLEWARES_FILE" ]; then
-  cp "$MIDDLEWARES_EXAMPLE" "$MIDDLEWARES_FILE"
-  echo "✅ $MIDDLEWARES_EXAMPLE → $MIDDLEWARES_FILE kopyalandı"
+# Temel config dosyalarını templates/ → enabled/ kopyala
+for config in crowdsec.yml compression.yml hide-server-info.yml; do
+  if [ ! -f "$ENABLED_DIR/$config" ]; then
+    cp "$TEMPLATES_DIR/$config" "$ENABLED_DIR/$config"
+    echo "✅ $TEMPLATES_DIR/$config → $ENABLED_DIR/$config kopyalandı"
+  else
+    echo "ℹ️  $ENABLED_DIR/$config mevcut, dokunulmadı"
+  fi
+done
+
+# middlewares.yml şablonunu kopyala (özelleştirme gerektirir)
+if [ ! -f "$ENABLED_DIR/middlewares.yml" ]; then
+  cp "$TEMPLATES_DIR/middlewares.yml" "$ENABLED_DIR/middlewares.yml"
+  echo "✅ $TEMPLATES_DIR/middlewares.yml → $ENABLED_DIR/middlewares.yml kopyalandı"
 else
-  echo "ℹ️  $MIDDLEWARES_FILE mevcut, dokunulmadı"
+  echo "ℹ️  $ENABLED_DIR/middlewares.yml mevcut, dokunulmadı"
 fi
 
 # --------------------------------------------------

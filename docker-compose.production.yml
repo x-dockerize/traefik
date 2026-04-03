@@ -78,7 +78,7 @@ services:
       - 443:443
     volumes:
       - ./.docker/traefik/acme:/etc/traefik/acme # ACME certificate storage
-      - ./.docker/traefik/conf:/etc/traefik/conf:ro
+      - ./.docker/traefik/conf/enabled:/etc/traefik/conf:ro
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro # Required for Docker provider
     logging:
